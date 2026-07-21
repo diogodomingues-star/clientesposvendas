@@ -2041,35 +2041,10 @@
         <span id="atendAlertBarText">Você tem atendimentos aguardando solução há mais de 5 dias!</span>
       </div>
 
-      <!-- Registro Rápido -->
-      <div class="atend-quick-form">
-        <div class="form-title" style="margin-bottom: 1.25rem;">
-          <i class="fa-solid fa-note-sticky"></i> Registrar Novo Atendimento
-        </div>
-        <div class="grid-form">
-          <div class="form-group">
-            <label>Código do Cliente</label>
-            <input type="text" id="at-idCliente" placeholder="Ex: CLI-001">
-          </div>
-          <div class="form-group">
-            <label>Nome do Cliente</label>
-            <input type="text" id="at-cliente" placeholder="Ex: João da Silva Ltda">
-          </div>
-          <div class="form-group">
-            <label>Consultor</label>
-            <input type="text" id="at-consultor" placeholder="Seu nome">
-          </div>
-          <div class="form-group">
-            <label>Assunto</label>
-            <input type="text" id="at-assunto" placeholder="Ex: Dúvida sobre fatura">
-          </div>
-        </div>
-        <div class="form-group" style="margin-bottom: 1.25rem;">
-          <label>Descrição do atendimento (o que aconteceu, ex: conversa por WhatsApp)</label>
-          <textarea id="at-descricao" placeholder="Descreva rapidamente o assunto tratado com o cliente..."></textarea>
-        </div>
-        <button class="btn btn-small" onclick="registrarAtendimento()">
-          <i class="fa-solid fa-plus"></i> Registrar Atendimento
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+        <h2 style="color: var(--primary); font-size: 1.3rem; font-weight: 700;"><i class="fa-solid fa-headset"></i> Atendimentos</h2>
+        <button class="btn btn-small" onclick="abrirModalNovoAtendimento()">
+          <i class="fa-solid fa-plus"></i> Novo Atendimento
         </button>
       </div>
 
@@ -2650,6 +2625,42 @@
     </div>
   </div>
 
+  <div class="custom-modal-overlay" id="novoAtendModalOverlay">
+    <div class="custom-modal" style="max-width: 600px; width: 95%;">
+      <div class="custom-modal-title">
+        <i class="fa-solid fa-note-sticky" style="color: var(--primary);"></i> Registrar Novo Atendimento
+      </div>
+      <div class="custom-modal-content" style="margin-bottom: 1rem;">
+        <div class="grid-form">
+          <div class="form-group">
+            <label>Código do Cliente</label>
+            <input type="text" id="at-idCliente" placeholder="Ex: CLI-001">
+          </div>
+          <div class="form-group">
+            <label>Nome do Cliente</label>
+            <input type="text" id="at-cliente" placeholder="Ex: João da Silva Ltda">
+          </div>
+          <div class="form-group">
+            <label>Consultor</label>
+            <input type="text" id="at-consultor" placeholder="Seu nome">
+          </div>
+        </div>
+        <div class="form-group" style="margin-bottom: 1.25rem;">
+          <label>Assunto</label>
+          <input type="text" id="at-assunto" placeholder="Ex: Dúvida sobre fatura">
+        </div>
+        <div class="form-group">
+          <label>Descrição do atendimento (o que aconteceu, ex: conversa por WhatsApp)</label>
+          <textarea id="at-descricao" style="min-height: 100px; padding: 0.75rem 1rem; border: 1px solid var(--border); border-radius: 8px; font-size: 0.9rem; outline: none; font-family: inherit; resize: vertical;" placeholder="Descreva rapidamente o assunto tratado com o cliente..."></textarea>
+        </div>
+      </div>
+      <div class="custom-modal-footer">
+        <button class="btn btn-secondary btn-small" onclick="fecharModalNovoAtendimento()">Cancelar</button>
+        <button class="btn btn-small" onclick="registrarAtendimento()"><i class="fa-solid fa-plus"></i> Registrar Atendimento</button>
+      </div>
+    </div>
+  </div>
+
   <div class="custom-modal-overlay" id="editAtendModalOverlay">
     <div class="custom-modal" style="max-width: 600px; width: 95%;">
       <div class="custom-modal-title">
@@ -3031,6 +3042,20 @@
       renderAtendimentos();
     }
 
+    function abrirModalNovoAtendimento() {
+      document.getElementById('at-idCliente').value = '';
+      document.getElementById('at-cliente').value = '';
+      document.getElementById('at-consultor').value = '';
+      document.getElementById('at-assunto').value = '';
+      document.getElementById('at-descricao').value = '';
+
+      document.getElementById('novoAtendModalOverlay').className = "custom-modal-overlay active";
+    }
+
+    function fecharModalNovoAtendimento() {
+      document.getElementById('novoAtendModalOverlay').className = "custom-modal-overlay";
+    }
+
     async function registrarAtendimento() {
       const idCliente = document.getElementById('at-idCliente').value.trim();
       const cliente = document.getElementById('at-cliente').value.trim();
@@ -3072,11 +3097,7 @@
       atendimentos.unshift(novoAtendimento);
       saveAtendimentosToLocalStorage();
 
-      document.getElementById('at-idCliente').value = '';
-      document.getElementById('at-cliente').value = '';
-      document.getElementById('at-assunto').value = '';
-      document.getElementById('at-descricao').value = '';
-
+      fecharModalNovoAtendimento();
       populateAtendConsultorFilter();
       renderAtendimentos();
       showToast("Atendimento registrado!");
